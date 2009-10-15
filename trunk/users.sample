@@ -1,0 +1,18 @@
+main : 
+{
+  users = ( 
+    {
+      username = "Administrator";
+      password = "9bd3e6bf8599bc2f31f3f22a16725059";
+      aeskey = "f2d5395ffc2a283367aa7627e6b0d8fc";
+    }, 
+    {
+      username = "venatir";
+      password = "9bd3e6bf8599bc2f31f3f22a16725059";
+      aeskey = "f2d5395ffc2a283367aa7627e6b0d8fc";
+    } );
+  aeskeys : 
+  {
+    key_f2d5395ffc2a283367aa7627e6b0d8fc = ( 10, 3 );
+  };
+};
