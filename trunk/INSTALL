@@ -1,0 +1,17 @@
+This is the SIMPLE approach to yubikey and freeradius. You don't need any additional servers.
+Keys stand on the radius server. Authentication is all done locally. No xml (saml) traveling over the net.
+This is fast and easy and simple. It's for small and medium organisations that do not need enterprise stuff and certainly do not need a fancy web interface. The freeradius module uses a conf file. I do not want a database, as it's another point of failure and remember that the radius authentication is quite important for an organisation.
+It has a SIMPLE configuration file that keeps track of everything you need. (see users.sample)
+
+This project uses yubico-low-level library and libconfig. A couple of files have been moved into the project to simplify things even more. You do not need to install other stuff. Just compile radius with this module.
+To do this:
+
+1. Untar the freeradius sources.
+2. Create a directory called src/modules/rlm_yubikey
+3. svn checkout there
+4. configure && make && make install
+
+Location of the config file is hardcoded for now. Feel free to modify the code as you wish. Eventually send me the modifications so I can update this.
+
+This code uses the yubico-c-read-only library hosted at google-code and libconfig.
+To simplify things even further I included everything in there.
