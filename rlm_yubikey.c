@@ -236,16 +236,16 @@ static int yubikey_auth_core(myConf_t *myConf, REQUEST *request)
             return RLM_MODULE_FAIL;
         }
 
-        if ((config_setting_get_string_elem(myConf->config_setting, 0) == NULL) ||
-                (config_setting_get_string_elem(myConf->config_setting, 1) == NULL) ||
-                (config_setting_get_string_elem(myConf->config_setting, 2) == NULL))
+        if ((config_setting_get_string_elem(tmpSetting, 0) == NULL) ||
+                (config_setting_get_string_elem(tmpSetting, 1) == NULL) ||
+                (config_setting_get_string_elem(tmpSetting, 2) == NULL))
         {
-            DEBUG("rlm_yubikey: Failed to parse configuration file: if ((config_setting_get_string_elem(config_setting,0)==NULL)||(config_setting_get_string_elem(config_setting,1)==NULL)||(config_setting_get_string_elem(config_setting,2)==NULL)) ");
+            DEBUG("rlm_yubikey: Failed to parse configuration file while reading the username/password/aeskey triplet ");
             return RLM_MODULE_FAIL;
         }
 
         //check usernames are equal
-        if (strcmp(request->username->vp_strvalue, config_setting_get_string_elem(myConf->config_setting, 0)) != 0)
+        if (strcmp(request->username->vp_strvalue, config_setting_get_string_elem(tmpSetting, 0)) != 0)
         {
             //users do not match. No need to debug this
             //Go to next iteration
@@ -253,7 +253,7 @@ static int yubikey_auth_core(myConf_t *myConf, REQUEST *request)
         }
 
         //check passwords are equal
-        if (strcmp(myConf->md5ComputedString, config_setting_get_string_elem(myConf->config_setting, 1)) != 0)
+        if (strcmp(myConf->md5ComputedString, config_setting_get_string_elem(tmpSetting, 1)) != 0)
         {
             //passwords do not match. We debug
             DEBUG("rlm_yubikey: Password does not match for user %s", request->username->vp_strvalue);
@@ -263,7 +263,7 @@ static int yubikey_auth_core(myConf_t *myConf, REQUEST *request)
 
         //check aes stuff - mostly copied from the ykdebug.c that comes with the low-level yubikey library
         uint8_t buf[128];
-        const char *aeskey = config_setting_get_string_elem(myConf->config_setting, 2);
+        const char *aeskey = config_setting_get_string_elem(tmpSetting, 2);
         char *token = myConf->token;
         uint8_t key[YUBIKEY_KEY_SIZE];
         yubikey_token_st tok;
@@ -324,7 +324,7 @@ static int yubikey_auth_core(myConf_t *myConf, REQUEST *request)
             session = config_setting_get_int_elem(myConf->config_setting, 1);
             DEBUG("rlm_yubikey: Read counter: %d, session: %d", counter, session);
 
-            if ((tok.ctr < counter)||((tok.ctr == counter) && (session <= tok.use)))
+            if ((tok.ctr < counter)||((tok.ctr == counter) && (tok.use <= session)))
             {
                 DEBUG("rlm_yubikey: someone tried to login with an old generated hash");
                 return RLM_MODULE_REJECT;
